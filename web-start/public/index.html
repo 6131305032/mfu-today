@@ -17,7 +17,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="description" content="Learn how to use the Firebase platform on the Web">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Friendly Chat</title>
+  <title>MFU Today</title>
 
   <!-- Disable tap highlight on IE -->
   <meta name="msapplication-tap-highlight" content="no">
@@ -49,14 +49,22 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
   <link rel="stylesheet" href="styles/main.css">
 </head>
+<style>
+  @media (max-width: 479px){
+.mdl-cell--12-col {
+width:100%;
+padding:0px;
+margin: 0px;
+}}
+</style>
 <body>
 <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
 
   <!-- Header section containing logo -->
-  <header class="mdl-layout__header mdl-color-text--white mdl-color--light-blue-700">
+  <header class="mdl-layout__header mdl-color-text--white mdl-color--red">
     <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
       <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
-        <h3><i class="material-icons">chat_bubble_outline</i> Friendly Chat</h3>
+        <h3><i class="material-icons">favorite_border</i> MFU Today</h3>
       </div>
       <div id="user-container">
         <div hidden id="user-pic"></div>
@@ -71,11 +79,42 @@
     </div>
   </header>
 
+  <!--Custom Stuff -->
+  <div id="signin-notice" class="mdl-layout__header mdl-color-text--white">
+    <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
+      <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
+        <p><i class="material-icons">announcement</i>You will only be able to view official announcements.  You must sign-in to see the live feed. </p>
+      </div>
+    </div>
+  </div>
+
   <main class="mdl-layout__content mdl-color--grey-100">
     <div id="messages-card-container" class="mdl-cell mdl-cell--12-col mdl-grid">
 
-      <!-- Messages container -->
-      <div id="messages-card" class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop">
+      <!-- Announcements -->
+      <div id="announcement-card" class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop">
+        <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+          <div id="announcements">
+            <div class="message-container visible">
+              <div class="spacing"><div class="pic" style="background-image: url(&quot;https://lh3.googleusercontent.com/-wj_gT5HxQlM/AAAAAAAAAAI/AAAAAAAAAA8/aNj5SwOQ0cE/photo.jpg?sz=150&quot;);"></div>
+              </div>
+            <div class="message">The MFU Library will be closed from Dec04 - Dec10 for renovations. </div>
+            <div class="name">Official Announcement</div>
+            </div>
+            <div class="message-container visible">
+                <div class="spacing"><div class="pic" style="background-image: url(&quot;https://lh3.googleusercontent.com/-wj_gT5HxQlM/AAAAAAAAAAI/AAAAAAAAAA8/aNj5SwOQ0cE/photo.jpg?sz=150&quot;);"></div>
+                </div>
+              <div class="message">Some other Official Announcement. </div>
+              <div class="name">Official Announcement</div>
+              </div>
+          </div>
+          <span id="message-filler"></span>
+          </div>
+        </div>
+      
+
+      <!-- Feed -->
+      <div id="messages-card" style="width: 100%; margin:0px; padding:0px;" class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop">
         <div class="mdl-card__supporting-text mdl-color-text--grey-600">
           <div id="messages">
             <span id="message-filler"></span>
@@ -86,7 +125,7 @@
               <label class="mdl-textfield__label" for="message">Message...</label>
             </div>
             <button id="submit" disabled type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
-              Send
+              Post
             </button>
           </form>
           <form id="image-form" action="#">
@@ -97,6 +136,7 @@
           </form>
         </div>
       </div>
+    </div>
 
       <div id="must-signin-snackbar" class="mdl-js-snackbar mdl-snackbar">
         <div class="mdl-snackbar__text"></div>

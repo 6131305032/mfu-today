@@ -34,7 +34,7 @@ main, #messages-card {
 }
 .mdl-grid {
   max-width: 1024px;
-  margin: auto;
+  margin: 0;
 }
 .material-icons {
   font-size: 36px;
