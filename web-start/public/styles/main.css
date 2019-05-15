@@ -20,12 +20,18 @@
 main, #messages-card {
   height: 100%;
   padding-bottom: 0;
+  width: 100%;
 }
 #messages-card-container {
   height: calc(100% - 35px);
   padding-bottom: 0;
 }
 #messages-card {
+  width: 100%;
+  margin-top: 15px;
+}
+#announcements-card {
+  width:100%;
   margin-top: 15px;
 }
 .mdl-layout__header-row span {
@@ -61,7 +67,7 @@ main, #messages-card {
 #announcements {
   overflow-y: auto;
   margin-bottom: 10px;
-  height: calc(100% - 80px);
+
   display: flex;
   flex-direction: column;
 }
@@ -84,12 +90,14 @@ main, #messages-card {
   padding-top: 10px;
   opacity: 0;
   transition: opacity 1s ease-in-out;
+  width:100%;
 }
 .announcement-container {
   display: block;
   margin-top: 10px;
   border-top: 1px solid #f3f3f3;
   padding-top: 10px;
+  width:100%;
 }
 .message-container.visible {
   opacity: 1;
@@ -126,7 +134,7 @@ main, #messages-card {
   width: calc(100% - 40px);
   padding: 5px 0 5px 10px;
 }
-.announcement-container .message {
+.announcement-container .announcement {
   display: table-cell;
   width: calc(100% - 40px);
   padding: 5px 0 5px 10px;
