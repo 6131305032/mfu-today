@@ -61,6 +61,18 @@ function saveMessage(messageText) {
     console.error('Error writing new message to Firebase Database', error);
   });
 }
+// Saves a new ANNOUNCEMENT on the Firebase DB.
+function saveAnnouncement(announcementText) {
+  // Add a new message entry to the Firebase database.
+  return firebase.firestore().collection('announcements').add({
+    name: getUserName(),
+    text: announcementText,
+    profilePicUrl: getProfilePicUrl(),
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  }).catch(function(error) {
+    console.error('Error writing new message to Firebase Database', error);
+  });
+}
 
 // Loads chat messages history and listens for upcoming ones.
 function loadMessages() {
@@ -78,6 +90,28 @@ function loadMessages() {
       } else {
         var message = change.doc.data();
         displayMessage(change.doc.id, message.timestamp, message.name,
+                       message.text, message.profilePicUrl, message.imageUrl);
+      }
+    });
+  });
+}
+
+// Loads ANNOUNCEMENTS history and listens for upcoming ones.
+function loadAnnouncements() {
+  // Create the query to load the last 4 messages and listen for new ones.
+  var query = firebase.firestore()
+                  .collection('announcements')
+                  .orderBy('timestamp', 'desc')
+                  .limit(4);
+  
+  // Start listening to the query.
+  query.onSnapshot(function(snapshot) {
+    snapshot.docChanges().forEach(function(change) {
+      if (change.type === 'removed') {
+        deleteMessage(change.doc.id);
+      } else {
+        var message = change.doc.data();
+        displayAnnouncement(change.doc.id, message.timestamp, message.name,
                        message.text, message.profilePicUrl, message.imageUrl);
       }
     });
@@ -156,6 +190,20 @@ function onMessageFormSubmit(e) {
     });
   }
 }
+// Triggered when the send new announcement form is submitted.
+function onAnnouncementFormSubmit(e) {
+  console.log("Announcement Button Function Accessed");
+  e.preventDefault();
+  // Check that the user entered a message and is signed in.
+  if (announcementInputElement.value) {
+    
+    saveAnnouncement(announcementInputElement.value).then(function() {
+      // Clear message text field and re-enable the SEND button.
+      resetMaterialTextfield(announcementInputElement);
+      toggleButton2();
+    });
+  }
+}
 
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 function authStateObserver(user) {
@@ -190,8 +238,9 @@ function authStateObserver(user) {
 
       
       if(profile.uid==103455312348040801272){
-        //User is Admin do something different
-        userPicElement.setAttribute('hidden', 'true');
+        //User is Admin display new announcement form
+       announcementFormElement.setAttribute("style","display:flex");
+
       }
     });
 
@@ -247,6 +296,15 @@ var MESSAGE_TEMPLATE =
 
       '<div class="name"></div>' +
     '</div>';
+
+    // Template for announcements.
+var ANNOUNCEMENT_TEMPLATE =
+'<div class="announcement-container">' +
+'<div class="spacing"><div class="pic"></div></div>' +      
+  '<div class="announcement"></div>' +
+
+  '<div class="name"></div>' +
+'</div>';
 
 // Adds a size to Google Profile pics URLs.
 function addSizeToGoogleProfilePic(url) {
@@ -311,6 +369,49 @@ function displayMessage(id, timestamp, name, text, picUrl, imageUrl) {
   messageInputElement.focus();
 }
 
+//Displays Announcements in the UI
+function displayAnnouncement(id, timestamp, name, text, picUrl, imageUrl) {
+  var div = document.getElementById(id);
+  // If an element for that message does not exists yet we create it.
+  if (!div) {
+    var container = document.createElement('div');
+    container.innerHTML = ANNOUNCEMENT_TEMPLATE;
+    div = container.firstChild;
+    div.setAttribute('id', id);
+    div.setAttribute('timestamp', timestamp);
+    for (var i = 0; i < announcementListElement.children.length; i++) {
+      var child = announcementListElement.children[i];
+      var time = child.getAttribute('timestamp');
+      if (time && time > timestamp) {
+        break;
+      }
+    }
+    announcementListElement.insertBefore(div, child);
+  }
+  if (picUrl) {
+    div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(picUrl) + ')';
+  }
+  div.querySelector('.name').textContent = name;
+  var announcementElement = div.querySelector('.announcement');
+  if (text) { // If the message is text.
+    announcementElement.textContent = text;
+    // Replace all line breaks by <br>.
+    announcementElement.innerHTML = announcementElement.innerHTML.replace(/\n/g, '<br>');
+  } else if (imageUrl) { // If the message is an image.
+    var image = document.createElement('img');
+    image.addEventListener('load', function() {
+      announcementListElement.scrollTop = announcementListElement.scrollHeight;
+    });
+    image.src = imageUrl + '&' + new Date().getTime();
+    announcementElement.innerHTML = '';
+    announcementElement.appendChild(image);
+  }
+  // Show the card fading-in and scroll to view the new message.
+  setTimeout(function() {div.classList.add('visible')}, 1);
+  //announcementListElement.scrollTop = announcementListElement.scrollHeight;
+  announcementInputElement.focus();
+}
+
 // Enables or disables the submit button depending on the values of the input
 // fields.
 function toggleButton() {
@@ -318,6 +419,14 @@ function toggleButton() {
     submitButtonElement.removeAttribute('disabled');
   } else {
     submitButtonElement.setAttribute('disabled', 'true');
+  }
+}
+
+function toggleButton2() {
+  if (announcementInputElement.value) {
+    announcementButtonElement.removeAttribute('disabled');
+  } else {
+    announcementButtonElement.setAttribute('disabled', 'true');
   }
 }
 
@@ -349,18 +458,30 @@ var userNameElement = document.getElementById('user-name');
 var signInButtonElement = document.getElementById('sign-in');
 var signOutButtonElement = document.getElementById('sign-out');
 var signInSnackbarElement = document.getElementById('must-signin-snackbar');
-
 var signinNoticeElement = document.getElementById('signin-notice');
 var feedElement = document.getElementById('messages-card');
 
+
+//Announcement DOM Elements
+var announcementListElement = document.getElementById('announcements');
+var announcementFormElement = document.getElementById('announcement-form');
+var announcementInputElement = document.getElementById('announcement');
+var announcementButtonElement = document.getElementById('adminsubmit');
+
 // Saves message on form submit.
 messageFormElement.addEventListener('submit', onMessageFormSubmit);
+
+//this breaks everything...
+announcementFormElement.addEventListener('submit', onAnnouncementFormSubmit);
+
 signOutButtonElement.addEventListener('click', signOut);
 signInButtonElement.addEventListener('click', signIn);
 
 // Toggle for the button.
 messageInputElement.addEventListener('keyup', toggleButton);
 messageInputElement.addEventListener('change', toggleButton);
+announcementInputElement.addEventListener('keyup', toggleButton2);
+announcementInputElement.addEventListener('change', toggleButton2);
 
 // Events for image upload.
 imageButtonElement.addEventListener('click', function(e) {
@@ -379,11 +500,8 @@ firestore.settings(settings);
 
 // We load currently existing chat messages and listen to new ones.
 loadMessages();
+loadAnnouncements();
 
-//Bullshit
-
-
-showCard(announcements);
 
 
 

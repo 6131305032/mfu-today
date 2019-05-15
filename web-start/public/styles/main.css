@@ -58,10 +58,23 @@ main, #messages-card {
   display: flex;
   flex-direction: column;
 }
+#announcements {
+  overflow-y: auto;
+  margin-bottom: 10px;
+  height: calc(100% - 80px);
+  display: flex;
+  flex-direction: column;
+}
 #message-filler {
   flex-grow: 1;
 }
+#announcement-filler {
+  flex-grow: 1;
+}
 .message-container:first-of-type {
+  border-top-width: 0;
+}
+.announcement-container:first-of-type {
   border-top-width: 0;
 }
 .message-container {
@@ -72,10 +85,27 @@ main, #messages-card {
   opacity: 0;
   transition: opacity 1s ease-in-out;
 }
+.announcement-container {
+  display: block;
+  margin-top: 10px;
+  border-top: 1px solid #f3f3f3;
+  padding-top: 10px;
+}
 .message-container.visible {
   opacity: 1;
 }
+.announcement-container.visible {
+  opacity: 1;
+}
 .message-container .pic {
+  background-image: url('/images/profile_placeholder.png');
+  background-repeat: no-repeat;
+  width: 30px;
+  height: 30px;
+  background-size: 30px;
+  border-radius: 20px;
+}
+.announcement-container .pic {
   background-image: url('/images/profile_placeholder.png');
   background-repeat: no-repeat;
   width: 30px;
@@ -87,12 +117,30 @@ main, #messages-card {
   display: table-cell;
   vertical-align: top;
 }
+.announcement-container .spacing {
+  display: table-cell;
+  vertical-align: top;
+}
 .message-container .message {
   display: table-cell;
   width: calc(100% - 40px);
   padding: 5px 0 5px 10px;
 }
+.announcement-container .message {
+  display: table-cell;
+  width: calc(100% - 40px);
+  padding: 5px 0 5px 10px;
+}
 .message-container .name {
+  display: inline-block;
+  width: 100%;
+  padding-left: 40px;
+  color: #bbb;
+  font-style: italic;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+.announcement-container .name {
   display: inline-block;
   width: 100%;
   padding-left: 40px;
@@ -107,6 +155,12 @@ main, #messages-card {
   width: calc(100% - 48px);
   float: left;
 }
+#announcement-form {
+  display: flex;
+  flex-direction: row;
+  width: calc(100% - 48px);
+  float: left;
+}
 #image-form {
   display: flex;
   flex-direction: row;
@@ -116,7 +170,14 @@ main, #messages-card {
 #message-form .mdl-textfield {
   width: calc(100% - 100px);
 }
+#announcement-form .mdl-textfield {
+  width: calc(100% - 100px);
+}
 #message-form button, #image-form button {
+  width: 100px;
+  margin: 15px 0 0 10px;
+}
+#announcement-form button, #image-form button {
   width: 100px;
   margin: 15px 0 0 10px;
 }
